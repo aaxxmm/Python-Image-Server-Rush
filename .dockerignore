@@ -1,0 +1,15 @@
+*.pyc
+*.pyo
+*.pyd
+.env
+.git
+.gitignore
+*.log
+.vscode
+.idea
+*.iml
+images/
+logs/
+.DS_Store
+*.swp
+*.swo

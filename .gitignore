@@ -1,0 +1,39 @@
+# Виртуальное окружение
+.venv/
+venv/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# PyCharm
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes — НЕ публикуем содержимое!
+images/*
+logs/*
+
+# НО сохраняем структуру папок
+!images/.gitkeep
+!logs/.gitkeep
+
+# Логи
+*.log
+
+# .env файлы
+.env

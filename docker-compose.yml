@@ -1,0 +1,44 @@
+services:
+  app:
+    build: .
+    container_name: image-server-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - images:/images
+      - logs:/logs
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+    networks:
+      - app-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(('127.0.0.1', 8000))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    container_name: image-server-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - images:/usr/share/nginx/html/images
+    depends_on:
+      - app
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  images:
+    driver: local
+  logs:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
