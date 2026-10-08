@@ -473,23 +473,22 @@ class ImageHandler(BaseHTTPRequestHandler):
             # Определяем, хочет ли клиент HTML или JSON
             accept_header = self.headers.get('Accept', '')
 
-            # Если браузер запрашивает HTML - возвращаем HTML-страницу
-            if 'text/html' in accept_header:
-                self.send_upload_success_html(unique_filename, filename)
-            else:
-                # Возвращаем JSON (для curl, API и т.д.)
-                response = {
-                    "success": True,
-                    "filename": unique_filename,
-                    "url": url,
-                    "message": "Изображение успешно загружено"
-                }
-                response_json = json.dumps(response, ensure_ascii=False)
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json; charset=utf-8')
-                self.send_header('Content-Length', str(len(response_json)))
-                self.end_headers()
-                self.wfile.write(response_json.encode('utf-8'))
+            # Возвращаем JSON
+            response = {
+                "success": True,
+                "filename": unique_filename,
+                "url": url,
+                "message": "Изображение успешно загружено"
+            }
+            response_json = json.dumps(response, ensure_ascii=False)
+
+            response_bytes = response_json.encode('utf-8')
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(response_bytes)))
+            self.end_headers()
+            self.wfile.write(response_bytes)
 
         except Exception as e:
             logger.error(f"Ошибка при загрузке файла: {str(e)}")
@@ -689,11 +688,12 @@ class ImageHandler(BaseHTTPRequestHandler):
         </html>
         """
 
+        html_bytes = html.encode('utf-8')
         self.send_response(code)
         self.send_header('Content-Type', 'text/html; charset=utf-8')
-        self.send_header('Content-Length', str(len(html)))
+        self.send_header('Content-Length', str(len(html_bytes)))
         self.end_headers()
-        self.wfile.write(html.encode('utf-8'))
+        self.wfile.write(html_bytes)
 
 
 def run_server(host='0.0.0.0', port=8000):
